@@ -11,6 +11,9 @@ def conv_num(num_str):
                     number
     :return:        base 10 number of num_str
     """
+    if num_str == '' or type(num_str) is not type(''):
+        return None
+
     vals = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,
             '8': 8, '9': 9, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14,
             'F': 15, 'X': 0, 'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14,
@@ -24,11 +27,17 @@ def conv_num(num_str):
     exp = len(num_str)-1
     result = False
 
+    if num_str[0] == '-':
+        sign = -1
+        exp -= 1
+        num_str = num_str[1:]
+
     if len(num_str) > 1:
         is_hex, result = hex_helper(num_str)
 
-    if result:
-        return None
+    if is_hex:
+        num_str = num_str[2:]
+        exp -= 2
 
     is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result = (
         conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
@@ -62,17 +71,15 @@ def conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
                     dec_val, dec_div, result, vals):
     for digit in num_str:
         if digit == '-':
-            sign = -1
-            exp -= 1
-            continue
+            result = True
+            break
         if digit == '.':
             if is_float or is_hex:
                 result = True
                 break
             is_float = True
             continue
-        if digit.isalpha() and (num_str[0] != '0' or (num_str[1] != 'x' and
-                                                      num_str[1] != 'X')):
+        if digit.isalpha() and not is_hex:
             result = True
             break
         if is_float:
