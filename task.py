@@ -87,7 +87,7 @@ def convert_binary_to_hexadecimal(binary_num):
     sections = []
     for i in range(0, len(binary_num), 4):
         section = binary_num[i:i+4]  # slice the string into sections of 4
-        sections.append(section)   
+        sections.append(section) 
 
     totals = []
     for section in sections:
