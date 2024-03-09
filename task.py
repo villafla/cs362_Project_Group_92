@@ -25,7 +25,7 @@ def conv_num(num_str):
     result = False
 
     if len(num_str) > 1:
-        is_hex, result = hex_helper(num_str) 
+        is_hex, result = hex_helper(num_str)
 
     if result:
         return None
