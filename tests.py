@@ -44,7 +44,8 @@ class TestCase(unittest.TestCase):
 
     def test6(self):
         """
-        A test to check if a binary number is converted to hexadecimal correctly.
+        A test to check if a binary number is converted to hexadecimal 
+        correctly.
         """
         binary_num = '1011101010'
         expected = '02 EA'
