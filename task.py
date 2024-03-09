@@ -76,10 +76,10 @@ def convert_binary_to_hexadecimal(binary_num):
     :param binary_num: a binary number as a string.
     :returns: hexadecimal equivalent as a string.
     """
-    decimal_to_hex = {0:'0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6',
+    decimal_to_hex = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6',
                       7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C',
                       13: 'D', 14: 'E',  15: 'F'}
-
+    
     if len(binary_num) % 4 != 0:
         leading_zeros = 4 - (len(binary_num) % 4)
         binary_num = '0' * leading_zeros + binary_num
