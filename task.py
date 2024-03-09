@@ -22,18 +22,44 @@ def conv_num(num_str):
     dec_div = 1
     is_hex = False
     exp = len(num_str)-1
+    result = False
 
-    # check for hex or negative hex
-    if num_str[0] == '-' and num_str[1] == '0' and (num_str[2] == 'x' or
-                                                    num_str[2] == 'X'):
+    if len(num_str) > 1:
+        is_hex, result = hex_helper(num_str) 
+
+    if result:
+        return None
+
+    is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result = (
+        conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
+                        dec_val, dec_div, result, vals))
+
+    if result:
+        return None
+
+    if is_float:
+        int_val = int_val + (dec_val / dec_div)
+    int_val = int_val * sign
+    return int_val
+
+
+def hex_helper(num_str):
+    is_hex = False
+    result = False
+    if len(num_str) >= 3 and num_str[0] == '-' and num_str[1] == '0' and (
+                                    num_str[2] == 'x' or num_str[2] == 'X'):
         if len(num_str) == 3:
-            return None
+            result = True
         is_hex = True
-    if num_str[0] == '0' and (num_str[1] == 'x' or num_str[1] == 'X'):
+    elif num_str[0] == '0' and (num_str[1] == 'x' or num_str[1] == 'X'):
         if len(num_str) == 2:
-            return None
+            result = True
         is_hex = True
+    return is_hex, result
 
+
+def conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
+                    dec_val, dec_div, result, vals):
     for digit in num_str:
         if digit == '-':
             sign = -1
@@ -41,24 +67,23 @@ def conv_num(num_str):
             continue
         if digit == '.':
             if is_float or is_hex:
-                return None
+                result = True
+                break
             is_float = True
             continue
         if digit.isalpha() and (num_str[0] != '0' or (num_str[1] != 'x' and
                                                       num_str[1] != 'X')):
-            return None
+            result = True
+            break
         if is_float:
             dec_val = (dec_val * 10) + vals[digit]
             dec_div *= 10
         elif is_hex:
             if digit not in vals:
-                return None
+                result = True
+                break
             int_val += (16 ** exp) * vals[digit]
             exp -= 1
         else:
             int_val = int_val * 10 + vals[digit]
-
-    if is_float:
-        int_val = int_val + (dec_val / dec_div)
-    int_val = int_val * sign
-    return int_val
+    return is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result
