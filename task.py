@@ -37,7 +37,7 @@ def conv_binary(num):
     Successive division method.
 
     :param num: an integer (decimal number).
-    :returns: binary number as a string and num param
+    :returns: binary number as a string
     """
     binary_number = []
 
