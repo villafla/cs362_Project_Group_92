@@ -12,24 +12,32 @@ def conv_endian(num, endian='big'):
     if endian not in ('big', 'little'):
         return None
 
-    binary_num = convert_to_binary(num)
-    hex_num = convert_binary_to_hexadecimal(binary_num)
+    is_neg = False
+    if num < 0:
+        is_neg = True
+        num = abs(num)
+
+    binary_num = conv_binary(num)
+    hex_num = conv_hex(binary_num)
 
     if endian == 'little':
         hex_values = hex_num.split()  # split into groups so each byte is len 2
         hex_values.reverse()  # reverse the groups
         hex_num = ' '.join(hex_values)
 
+    if is_neg:
+        hex_num = '-' + hex_num
+
     return hex_num
 
 
-def convert_to_binary(num):
+def conv_binary(num):
     """
     helper function to convert an integer number into a binary number.
     Successive division method.
 
     :param num: an integer (decimal number).
-    :returns: binary number as a string.
+    :returns: binary number as a string and num param
     """
     binary_number = []
 
@@ -67,7 +75,7 @@ def convert_to_binary(num):
     return string_binary_number
 
 
-def convert_binary_to_hexadecimal(binary_num):
+def conv_hex(binary_num):
     """
     helper function to convert a binary number into a hexadecimal number.
     Each byte must be two characters in length.
@@ -78,7 +86,10 @@ def convert_binary_to_hexadecimal(binary_num):
     """
     decimal_to_hex = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6',
                       7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C',
-                      13: 'D', 14: 'E',  15: 'F'}
+                      13: 'D', 14: 'E', 15: 'F', -0: '-0', -1: '-1', -2: '-2',
+                      -3: '3', -4: '-4', -5: '-5', -6: '-6', -7: '-7',
+                      -8: '-8', -9: '-9', -10: '-A', -11: '-B', -12: '-C',
+                      -13: '-D', -14: '-E', -15: '-F'}
 
     if len(binary_num) % 4 != 0:
         leading_zeros = 4 - (len(binary_num) % 4)
@@ -108,7 +119,7 @@ def convert_binary_to_hexadecimal(binary_num):
         leading_zeros = 2 - (len(string_hex_number) % 2)
         string_hex_number = '0' * leading_zeros + string_hex_number
 
-    add_spaces = ' '.join(string_hex_number[i:i+2]
-                          for i in range(0, len(string_hex_number), 2))
+    string_hex_number = ' '.join(string_hex_number[i:i+2]
+                                 for i in range(0, len(string_hex_number), 2))
 
-    return add_spaces
+    return string_hex_number
