@@ -1,6 +1,186 @@
 import math
 
 
+def conv_num(num_str):
+    """
+    takes in a string, converts it into a base 10 number, and returns it.
+
+    :param num_str: string representing an integer, float, or hexadecimal
+                    number
+    :return:        base 10 number of num_str
+    """
+    if num_str == '' or type(num_str) is not type(''):
+        return None
+
+    vals = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,
+            '8': 8, '9': 9, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14,
+            'F': 15, 'X': 0, 'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14,
+            'f': 15, 'x': 0}
+    int_val = 0
+    dec_val = 0
+    sign = 1
+    is_float = False
+    dec_div = 1
+    is_hex = False
+    exp = len(num_str)-1
+    result = False
+
+    if num_str[0] == '-':
+        sign = -1
+        exp -= 1
+        num_str = num_str[1:]
+
+    if len(num_str) > 1:
+        is_hex, result = hex_helper(num_str)
+
+    if is_hex:
+        num_str = num_str[2:]
+        exp -= 2
+
+    is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result = (
+        conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
+                        dec_val, dec_div, result, vals))
+
+    if result:
+        return None
+
+    if is_float:
+        int_val = int_val + (dec_val / dec_div)
+    int_val = int_val * sign
+    return int_val
+
+
+def hex_helper(num_str):
+    """
+    Determines if an input is a hexadecimal value (True or False) and if
+    that hexadecimal value is a valid input (result)
+
+    :param num_str: string representing an integer, float, or hexadecimal
+                    number
+    :return:        is_hex (True or False)
+                    result (True or False)
+    """
+    is_hex = False
+    result = False
+    if len(num_str) >= 3 and num_str[0] == '-' and num_str[1] == '0' and (
+                                    num_str[2] == 'x' or num_str[2] == 'X'):
+        if len(num_str) == 3:
+            result = True
+        is_hex = True
+    elif num_str[0] == '0' and (num_str[1] == 'x' or num_str[1] == 'X'):
+        if len(num_str) == 2:
+            result = True
+        is_hex = True
+    return is_hex, result
+
+
+def conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
+                    dec_val, dec_div, result, vals):
+    """
+    Helper function to convert string of a number to an integer
+    """
+    for digit in num_str:
+        if digit == '-':
+            result = True
+            break
+        if digit == '.':
+            if is_float or is_hex:
+                result = True
+                break
+            is_float = True
+            continue
+        if digit.isalpha() and not is_hex:
+            result = True
+            break
+        if is_float:
+            dec_val = (dec_val * 10) + vals[digit]
+            dec_div *= 10
+        elif is_hex:
+            if digit not in vals:
+                result = True
+                break
+            int_val += (16 ** exp) * vals[digit]
+            exp -= 1
+        else:
+            int_val = int_val * 10 + vals[digit]
+    return is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result
+
+
+def my_datetime(num_sec):
+    """
+    Converts the number of seconds since the epoch: January 1st, 1970
+    to a date string format MM-DD-YYYY and accounts for leap years.
+    This function handles integer and float inputs, rounding down
+    floats to the nearest whole number. Only non-negative values are
+    accepted.
+
+    :param num_sec: The number of seconds since epoch. Must be a
+                    non-negative integer or float.
+    :returns: A string representing the date in MM-DD-YYYY format.
+
+    :raises TypeError: If num_sec is not an integer or float
+    :raises ValueError: If num_sec is negative
+
+    * Citation for the following function:
+    Date: 03/09/24
+    Adapted from: https://www.toppr.com/guides/python-guide/examples/python
+    -examples/functions/leap-year/python-program-check-leap-year/#:~:text
+    =A%20leap%20year%20Python%20is,will%20be%20checked%20with%20400.
+    """
+
+    if not isinstance(num_sec, (int, float)):
+        raise TypeError("Invalid input: num_sec must be a "
+                        "an integer or float")
+
+    if num_sec < 0:
+        raise ValueError("Invalid input: num_sec must be a "
+                         "non-negative integer")
+
+    num_sec = math.floor(num_sec)
+
+    SECONDS_IN_A_DAY = 86400
+    days_since_epoch = num_sec // SECONDS_IN_A_DAY
+
+    year = 1970
+    days_in_year = 365
+
+    # Determine the correct year and adjust days for leap years
+    while days_since_epoch >= days_in_year:
+        days_since_epoch -= days_in_year
+        year += 1
+
+        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+            days_in_year = 366
+        else:
+            days_in_year = 365
+
+    # Determine the correct month and day
+    days_per_month = [
+        31,
+        28 +
+        (1 if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0) else 0),
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+    ]
+    current_month = 0
+    while days_since_epoch >= days_per_month[current_month]:
+        days_since_epoch -= days_per_month[current_month]
+        current_month += 1
+
+    day = days_since_epoch + 1
+
+    date = f"{current_month + 1:02d}-{day:02d}-{year}"
+    return date
+
+
 def conv_endian(num, endian='big'):
     """
     converts an integer number into a hexadecimal number.
@@ -126,183 +306,3 @@ def conv_hex(binary_num):
                                  for i in range(0, len(string_hex_number), 2))
 
     return string_hex_number
-
-
-def my_datetime(num_sec):
-    """
-    Converts the number of seconds since the epoch: January 1st, 1970
-    to a date string format MM-DD-YYYY and accounts for leap years.
-    This function handles integer and float inputs, rounding down
-    floats to the nearest whole number. Only non-negative values are
-    accepted.
-
-    :param num_sec: The number of seconds since epoch. Must be a
-                    non-negative integer or float.
-    :returns: A string representing the date in MM-DD-YYYY format.
-
-    :raises TypeError: If num_sec is not an integer or float
-    :raises ValueError: If num_sec is negative
-
-    * Citation for the following function:
-    Date: 03/09/24
-    Adapted from: https://www.toppr.com/guides/python-guide/examples/python
-    -examples/functions/leap-year/python-program-check-leap-year/#:~:text
-    =A%20leap%20year%20Python%20is,will%20be%20checked%20with%20400.
-    """
-
-    if not isinstance(num_sec, (int, float)):
-        raise TypeError("Invalid input: num_sec must be a "
-                        "an integer or float")
-
-    if num_sec < 0:
-        raise ValueError("Invalid input: num_sec must be a "
-                         "non-negative integer")
-
-    num_sec = math.floor(num_sec)
-
-    SECONDS_IN_A_DAY = 86400
-    days_since_epoch = num_sec // SECONDS_IN_A_DAY
-
-    year = 1970
-    days_in_year = 365
-
-    # Determine the correct year and adjust days for leap years
-    while days_since_epoch >= days_in_year:
-        days_since_epoch -= days_in_year
-        year += 1
-
-        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-            days_in_year = 366
-        else:
-            days_in_year = 365
-
-    # Determine the correct month and day
-    days_per_month = [
-        31,
-        28 +
-        (1 if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0) else 0),
-        31,
-        30,
-        31,
-        30,
-        31,
-        31,
-        30,
-        31,
-        30,
-        31,
-    ]
-    current_month = 0
-    while days_since_epoch >= days_per_month[current_month]:
-        days_since_epoch -= days_per_month[current_month]
-        current_month += 1
-
-    day = days_since_epoch + 1
-
-    date = f"{current_month + 1:02d}-{day:02d}-{year}"
-    return date
-
-
-def conv_num(num_str):
-    """
-    takes in a string, converts it into a base 10 number, and returns it.
-
-    :param num_str: string representing an integer, float, or hexadecimal
-                    number
-    :return:        base 10 number of num_str
-    """
-    if num_str == '' or type(num_str) is not type(''):
-        return None
-
-    vals = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,
-            '8': 8, '9': 9, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14,
-            'F': 15, 'X': 0, 'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14,
-            'f': 15, 'x': 0}
-    int_val = 0
-    dec_val = 0
-    sign = 1
-    is_float = False
-    dec_div = 1
-    is_hex = False
-    exp = len(num_str)-1
-    result = False
-
-    if num_str[0] == '-':
-        sign = -1
-        exp -= 1
-        num_str = num_str[1:]
-
-    if len(num_str) > 1:
-        is_hex, result = hex_helper(num_str)
-
-    if is_hex:
-        num_str = num_str[2:]
-        exp -= 2
-
-    is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result = (
-        conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
-                        dec_val, dec_div, result, vals))
-
-    if result:
-        return None
-
-    if is_float:
-        int_val = int_val + (dec_val / dec_div)
-    int_val = int_val * sign
-    return int_val
-
-
-def hex_helper(num_str):
-    """
-    Determines if an input is a hexadecimal value (True or False) and if
-    that hexadecimal value is a valid input (result)
-
-    :param num_str: string representing an integer, float, or hexadecimal
-                    number
-    :return:        is_hex (True or False)
-                    result (True or False)
-    """
-    is_hex = False
-    result = False
-    if len(num_str) >= 3 and num_str[0] == '-' and num_str[1] == '0' and (
-                                    num_str[2] == 'x' or num_str[2] == 'X'):
-        if len(num_str) == 3:
-            result = True
-        is_hex = True
-    elif num_str[0] == '0' and (num_str[1] == 'x' or num_str[1] == 'X'):
-        if len(num_str) == 2:
-            result = True
-        is_hex = True
-    return is_hex, result
-
-
-def conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
-                    dec_val, dec_div, result, vals):
-    """
-    Helper function to convert string of a number to an integer
-    """
-    for digit in num_str:
-        if digit == '-':
-            result = True
-            break
-        if digit == '.':
-            if is_float or is_hex:
-                result = True
-                break
-            is_float = True
-            continue
-        if digit.isalpha() and not is_hex:
-            result = True
-            break
-        if is_float:
-            dec_val = (dec_val * 10) + vals[digit]
-            dec_div *= 10
-        elif is_hex:
-            if digit not in vals:
-                result = True
-                break
-            int_val += (16 ** exp) * vals[digit]
-            exp -= 1
-        else:
-            int_val = int_val * 10 + vals[digit]
-    return is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result
