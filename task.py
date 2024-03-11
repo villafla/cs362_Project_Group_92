@@ -1,3 +1,6 @@
+import math
+
+
 def conv_endian(num, endian='big'):
     """
     converts an integer number into a hexadecimal number.
@@ -127,18 +130,39 @@ def conv_hex(binary_num):
 
 def my_datetime(num_sec):
     """
-    Determines what date aligns with the given amount of seconds since
-    the Epoch
+    Converts the number of seconds since the epoch: January 1st, 1970
+    to a date string format MM-DD-YYYY and accounts for leap years.
+    This function handles integer and float inputs, rounding down
+    floats to the nearest whole number. Only non-negative values are
+    accepted.
 
-    :param num_sec: an integer representing the amount of seconds
-                    since the Epoch
-    :return:        a string representing the date that aligns with that
-                    amount of time
+    :param num_sec: The number of seconds since epoch. Must be a
+                    non-negative integer or float.
+    :returns: A string representing the date in MM-DD-YYYY format.
+
+    :raises TypeError: If num_sec is not an integer or float
+    :raises ValueError: If num_sec is negative
+
+    * Citation for the following function:
+    Date: 03/09/24
+    Adapted from: https://www.toppr.com/guides/python-guide/examples/python
+    -examples/functions/leap-year/python-program-check-leap-year/#:~:text
+    =A%20leap%20year%20Python%20is,will%20be%20checked%20with%20400.
     """
+
+    if not isinstance(num_sec, (int, float)):
+        raise TypeError("Invalid input: num_sec must be a "
+                        "an integer or float")
+
+    if num_sec < 0:
+        raise ValueError("Invalid input: num_sec must be a "
+                         "non-negative integer")
+
+    num_sec = math.floor(num_sec)
+
     SECONDS_IN_A_DAY = 86400
     days_since_epoch = num_sec // SECONDS_IN_A_DAY
 
-    # Starting vals
     year = 1970
     days_in_year = 365
 
@@ -146,10 +170,11 @@ def my_datetime(num_sec):
     while days_since_epoch >= days_in_year:
         days_since_epoch -= days_in_year
         year += 1
-        days_in_year = (
-            366 if (year % 4 == 0 and year % 100 != 0)
-            or (year % 400 == 0) else 365
-        )
+
+        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+            days_in_year = 366
+        else:
+            days_in_year = 365
 
     # Determine the correct month and day
     days_per_month = [
@@ -173,7 +198,9 @@ def my_datetime(num_sec):
         current_month += 1
 
     day = days_since_epoch + 1
-    return f"{current_month + 1:02d}-{day:02d}-{year}"
+
+    date = f"{current_month + 1:02d}-{day:02d}-{year}"
+    return date
 
 
 def conv_num(num_str):

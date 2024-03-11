@@ -125,25 +125,61 @@ class TestCase(unittest.TestCase):
         expected = '-A2 91 0E'
         self.assertEqual(conv_endian(num, endian), expected)
 
-    def my_datetime_test1(self):
-        # Check to see if 0 seconds returns the start date
+    def test_my_datetime_1(self):
+        """
+        Check to see if 0 seconds returns the start date
+        """
         self.assertEqual(my_datetime(0), '01-01-1970')
 
-    def my_datetime_test2(self):
-        # Test a specific date
+    def test_my_datetime_2(self):
+        """
+        Test that the number of seconds returns a specific date
+        """
         self.assertEqual(my_datetime(123456789), '11-29-1973')
 
-    def my_datetime_test3(self):
-        # Test for if my_datetime returns correct date with a leap year
+    def test_my_datetime_3(self):
+        """
+        Test if my_datetime returns the correct date with a leap year
+        """
         self.assertEqual(my_datetime(201653971200), '02-29-8360')
 
-    def my_datetime_test4(self):
-        # Test for future date
+    def test_my_datetime_4(self):
+        """
+        Test for a far future date
+        """
         self.assertEqual(my_datetime(9876543210), '12-22-2282')
 
-    def my_datetime_test5(self):
-        # Test for non leap year
-        self.assertEqual(my_datetime(34128000), '02-28-1971')
+    def test_my_datetime_5(self):
+        """
+        Test with a non-leap year
+        """
+        self.assertEqual(my_datetime(36547200), '02-28-1971')
+
+    def test_my_datetime_6(self):
+        """
+        Test that a float rounds downs round in the date
+        """
+        self.assertEqual(my_datetime(36547200.999999), '02-28-1971')
+
+    def test_my_datetime_7(self):
+        """
+        Test with a random, non-leap year date
+        """
+        self.assertEqual(my_datetime(913589991), '12-13-1998')
+
+    def test_my_datetime_8(self):
+        """
+        Test that non-numeric input returns an error
+        """
+        with self.assertRaises(TypeError):
+            my_datetime("hello")
+
+    def test_my_datetime_9(self):
+        """
+        Test that a negative number returns an error
+        """
+        with self.assertRaises(ValueError):
+            my_datetime(-1)
 
     def test_conv_num_1(self):
         """
