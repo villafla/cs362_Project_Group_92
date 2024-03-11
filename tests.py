@@ -1,4 +1,5 @@
 import unittest
+from task import conv_binary, conv_hex, conv_endian
 from task import (
     convert_to_binary,
     convert_binary_to_hexadecimal,
@@ -21,7 +22,7 @@ class TestCase(unittest.TestCase):
         """
         num = 75
         expected = '01001011'
-        self.assertEqual(convert_to_binary(num), expected)
+        self.assertEqual(conv_binary(num), expected)
 
     def test3(self):
         """
@@ -29,7 +30,7 @@ class TestCase(unittest.TestCase):
         """
         num = 339
         expected = '000101010011'
-        self.assertEqual(convert_to_binary(num), expected)
+        self.assertEqual(conv_binary(num), expected)
 
     def test4(self):
         """
@@ -37,7 +38,7 @@ class TestCase(unittest.TestCase):
         """
         binary_num = '10110111'
         expected = 'B7'
-        self.assertEqual(convert_binary_to_hexadecimal(binary_num), expected)
+        self.assertEqual(conv_hex(binary_num), expected)
 
     def test5(self):
         """
@@ -45,7 +46,7 @@ class TestCase(unittest.TestCase):
         """
         binary_num = '11101001000110100010'
         expected = '0E 91 A2'
-        self.assertEqual(convert_binary_to_hexadecimal(binary_num), expected)
+        self.assertEqual(conv_hex(binary_num), expected)
 
     def test6(self):
         """
@@ -54,7 +55,7 @@ class TestCase(unittest.TestCase):
         """
         binary_num = '1011101010'
         expected = '02 EA'
-        self.assertEqual(convert_binary_to_hexadecimal(binary_num), expected)
+        self.assertEqual(conv_hex(binary_num), expected)
 
     def test7(self):
         """
@@ -62,7 +63,7 @@ class TestCase(unittest.TestCase):
         """
         binary_num = '1111011111100'
         expected = '1E FC'
-        self.assertEqual(convert_binary_to_hexadecimal(binary_num), expected)
+        self.assertEqual(conv_hex(binary_num), expected)
 
     def test8(self):
         """
@@ -81,17 +82,17 @@ class TestCase(unittest.TestCase):
         expected = '0E 91 A2'
         self.assertEqual(conv_endian(num), expected)
 
-    # def test10(self):
-    #     """
-    #     Checks for negative numbers.
-    #     """
-    #     num = -954786
-    #     expected = '-0E 91 A2'
-    #     self.assertEqual(conv_endian(num), expected)
+    def test10(self):
+        """
+        Checks for negative numbers.
+        """
+        num = -954786
+        expected = '-0E 91 A2'
+        self.assertEqual(conv_endian(num), expected)
 
     def test11(self):
         """
-        a test to convert decimal to hexadecimal.
+        Test to convert decimal to hexadecimal.
         """
         num = 954786
         endian = 'little'
@@ -104,7 +105,7 @@ class TestCase(unittest.TestCase):
         """
         num = -5
         expected = '1011'
-        self.assertEqual(convert_to_binary(num), expected)
+        self.assertEqual(conv_binary(num), expected)
 
     def test13(self):
         """
@@ -113,6 +114,15 @@ class TestCase(unittest.TestCase):
         num = -954786
         endian = 'small'
         expected = None
+        self.assertEqual(conv_endian(num, endian), expected)
+
+    def test14(self):
+        """
+        Test to check a negative number and little endian
+        """
+        num = -954786
+        endian = 'little'
+        expected = '-A2 91 0E'
         self.assertEqual(conv_endian(num, endian), expected)
 
     def my_datetime_test1(self):
