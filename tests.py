@@ -1,5 +1,12 @@
 import unittest
-from task import conv_binary, conv_hex, conv_endian, my_datetime, conv_num
+from task import conv_binary, conv_hex, conv_endian
+from task import (
+    conv_num,
+    convert_to_binary,
+    convert_binary_to_hexadecimal,
+    conv_endian,
+    my_datetime
+)
 
 
 class TestCase(unittest.TestCase):
