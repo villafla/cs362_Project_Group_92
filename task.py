@@ -253,6 +253,15 @@ def conv_num(num_str):
 
 
 def hex_helper(num_str):
+    """
+    Determines if an input is a hexadecimal value (True or False) and if
+    that hexadecimal value is a valid input (result)
+
+    :param num_str: string representing an integer, float, or hexadecimal
+                    number
+    :return:        is_hex (True or False)
+                    result (True or False)
+    """
     is_hex = False
     result = False
     if len(num_str) >= 3 and num_str[0] == '-' and num_str[1] == '0' and (
@@ -269,6 +278,9 @@ def hex_helper(num_str):
 
 def conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
                     dec_val, dec_div, result, vals):
+    """
+    Helper function to convert string of a number to an integer
+    """
     for digit in num_str:
         if digit == '-':
             result = True
