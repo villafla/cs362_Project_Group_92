@@ -121,7 +121,7 @@ def conv_hex(binary_num):
 
     string_hex_number = ' '.join(string_hex_number[i:i+2]
                                  for i in range(0, len(string_hex_number), 2))
-  
+
     return string_hex_number
 
 
@@ -258,4 +258,3 @@ def conv_num_helper(num_str, is_float, is_hex, sign, exp, int_val,
         else:
             int_val = int_val * 10 + vals[digit]
     return is_float, is_hex, sign, exp, int_val, dec_val, dec_div, result
-
