@@ -122,4 +122,48 @@ def conv_hex(binary_num):
     string_hex_number = ' '.join(string_hex_number[i:i+2]
                                  for i in range(0, len(string_hex_number), 2))
 
+
     return string_hex_number
+    return add_spaces
+
+
+def my_datetime(num_sec):
+    SECONDS_IN_A_DAY = 86400
+    days_since_epoch = num_sec // SECONDS_IN_A_DAY
+
+    # Starting vals
+    year = 1970
+    days_in_year = 365
+
+    # Determine the correct year and adjust days for leap years
+    while days_since_epoch >= days_in_year:
+        days_since_epoch -= days_in_year
+        year += 1
+        days_in_year = (
+            366 if (year % 4 == 0 and year % 100 != 0)
+            or (year % 400 == 0) else 365
+        )
+
+    # Determine the correct month and day
+    days_per_month = [
+        31,
+        28 +
+        (1 if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0) else 0),
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+    ]
+    current_month = 0
+    while days_since_epoch >= days_per_month[current_month]:
+        days_since_epoch -= days_per_month[current_month]
+        current_month += 1
+
+    day = days_since_epoch + 1
+    return f"{current_month + 1:02d}-{day:02d}-{year}"

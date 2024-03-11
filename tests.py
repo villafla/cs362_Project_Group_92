@@ -1,5 +1,11 @@
 import unittest
 from task import conv_binary, conv_hex, conv_endian
+from task import (
+    convert_to_binary,
+    convert_binary_to_hexadecimal,
+    conv_endian,
+    my_datetime
+)
 
 
 class TestCase(unittest.TestCase):
@@ -44,7 +50,8 @@ class TestCase(unittest.TestCase):
 
     def test6(self):
         """
-        A test to check if a binary number is converted to hexadecimal.
+        A test to check if a binary number is converted to hexadecimal
+        correctly.
         """
         binary_num = '1011101010'
         expected = '02 EA'
@@ -117,6 +124,26 @@ class TestCase(unittest.TestCase):
         endian = 'little'
         expected = '-A2 91 0E'
         self.assertEqual(conv_endian(num, endian), expected)
+
+    def my_datetime_test1(self):
+        # Check to see if 0 seconds returns the start date
+        self.assertEqual(my_datetime(0), '01-01-1970')
+
+    def my_datetime_test2(self):
+        # Test a specific date
+        self.assertEqual(my_datetime(123456789), '11-29-1973')
+
+    def my_datetime_test3(self):
+        # Test for if my_datetime returns correct date with a leap year
+        self.assertEqual(my_datetime(201653971200), '02-29-8360')
+
+    def my_datetime_test4(self):
+        # Test for future date
+        self.assertEqual(my_datetime(9876543210), '12-22-2282')
+
+    def my_datetime_test5(self):
+        # Test for non leap year
+        self.assertEqual(my_datetime(34128000), '02-28-1971')
 
 
 if __name__ == '__main__':
